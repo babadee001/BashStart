@@ -16,6 +16,9 @@ nodeSetup(){
 nginxSetup(){
     echo '############################## Setting up pm2, nginx and getting the repo ########################################'
     sudo npm install pm2 -g -y
+    if [ -d DevOps-AWS-Intro ]; then
+        sudo rm -rf DevOps-AWS-Intro
+    fi
     git clone https://github.com/babadee001/DevOps-AWS-Intro
     sudo apt-get install nginx
     cd /etc/nginx/sites-enabled/default
