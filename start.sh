@@ -17,16 +17,21 @@ nginxSetup(){
     echo '############################## Setting up pm2, nginx and getting the repo ########################################'
     sudo npm install pm2 -g -y
     if [ -d DevOps-AWS-Intro ]; then
+        echo '####################### Removing existing folder ######################'
         sudo rm -rf DevOps-AWS-Intro
     fi
     git clone https://github.com/babadee001/DevOps-AWS-Intro
     sudo apt-get install nginx
-    cd /etc/nginx/sites-enabled/default
-    sudo rm /etc/nginx/sites-enabled/default
-    if [ -d /etc/nginx/sites-available/HelloBooks ]; then
+    sudo /etc/init.d/nginx start
+    if [ -d /etc/nginx/sites-enabled/default ]; then
+        sudo rm /etc/nginx/sites-enabled/default
+    fi
+    if [ -d /etc/nginx/sites-enabled/HelloBooks ]; then
+        echo ' ######################## Removing existing config for app ##############################'
         sudo rm -rf /etc/nginx/sites-available/HelloBooks
         sudo rm -rf /etc/nginx/sites-enabled/HelloBooks
     fi
+
     sudo bash -c 'cat > /etc/nginx/sites-available/HelloBooks <<EOF
     server {
             listen 80;
@@ -34,11 +39,9 @@ nginxSetup(){
             location / {
                     proxy_pass 'http://$ip:8000';
             }
-    }
-    EOF'
+    }'
     sudo ln -s /etc/nginx/sites-available/HelloBooks /etc/nginx/sites-enabled/HelloBooks
-    sudo /etc/init.d/nginx start
-    sudo /etc/init.d/nginx restart
+    sudo service nginx restart
 }
 
 installDep(){
@@ -60,8 +63,11 @@ startPm2() {
      pm2 startOrRestart ecosystem.config.js
 }
 
-nodeSetup
-nginxSetup
-installDep
-sslSetup
-startPm2
+main(){
+    nodeSetup
+    nginxSetup
+    installDep
+    sslSetup
+    startPm2
+}
+main
