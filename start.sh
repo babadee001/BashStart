@@ -20,6 +20,10 @@ nginxSetup(){
     sudo apt-get install nginx
     cd /etc/nginx/sites-enabled/default
     sudo rm /etc/nginx/sites-enabled/default
+    if [ -d /etc/nginx/sites-available/HelloBooks ]; then
+        sudo rm -rf /etc/nginx/sites-available/HelloBooks
+        sudo rm -rf /etc/nginx/sites-enabled/HelloBooks
+    fi
     sudo bash -c 'cat > /etc/nginx/sites-available/HelloBooks <<EOF
     server {
             listen 80;
